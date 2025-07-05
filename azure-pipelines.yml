@@ -1,0 +1,29 @@
+trigger:
+  branches:
+    include:
+      - main
+
+variables:
+  imageName: 'python-sample-app'
+  acrLoginServer: 'myacrramraja.azurecr.io'
+  tag: '$(Build.BuildId)'
+
+stages:
+
+- stage: BuildAndPush
+  displayName: Build and Push Docker Image
+  jobs:
+  - job: DockerBuild
+    displayName: Docker Build Job
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - checkout: self
+    - task: Docker@2
+      displayName: Build and Push Docker Image
+      inputs:
+        command: buildAndPush
+        containerRegistry: 'acr-connection'   # service connection name
+        repository: '$(imageName)'
+        tags: |
+          $(tag)
